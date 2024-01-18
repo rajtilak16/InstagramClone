@@ -3,12 +3,27 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+const mongoose=require("mongoose");
+const expressSession = require("express-session");
+const dbConnect = require('./config/dbConnect')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const passport = require('passport');
 
 var app = express();
 
+dbConnect();
+//used for data save of logged in person if he gets to different pages in case to it stores the session and keeps him logged in
+app.use(expressSession({
+  secret: 'hey hey hey',
+  resave: false,
+  saveUninitialized: false
+}))
+// passport makes login and registration and all protected routes
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser(usersRouter.serializeUser());
+passport.deserializeUser(usersRouter.deserializeUser());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

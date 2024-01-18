@@ -1,9 +1,23 @@
-var express = require('express');
-var router = express.Router();
+const mongoose = require("mongoose");
+const plm = require("passport-local-mongoose");
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+// require("dotenv").config();
 
-module.exports = router;
+// mongoose.connect(process.env.DB_URL);
+
+const userSchema = mongoose.Schema({
+  username: String,
+  name: String,
+  email: String,
+  password: String,
+  profileImage: String,
+  bio: String,
+  posts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "posts"
+  }]
+})
+
+userSchema.plugin(plm);
+
+module.exports = mongoose.model("users", userSchema)
